@@ -34,4 +34,4 @@ exp:
       - "label-wise"
       # - "normal_conf_mat"
 
-  input_dir: <path-to-model-output-generations>
+  input_dir: <path-to-model-output-generations-using-infer-program>

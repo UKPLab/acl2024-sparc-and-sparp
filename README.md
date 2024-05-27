@@ -69,11 +69,12 @@ The private api keys such as for using OpenAI models can be provided in the `pri
 To run a desired task e.g. inference, execute the following command:
 
 ```bash
-python infer.py # to use the default location of the infer-config OR alternately
+python infer.py # to use the default location of the infer-config 
+# OR alternatively
 python infer.py --config my-infer-config.yaml
 ```
 
-Alternately, the training and inference can also be run as a job on a `slurm-cluster`. The corresponding batch submission scripts are provided as `slurm-train_sparp.sh` and `slurm-infer_sparp.sh`. 
+Alternatively, the training and inference can also be run as a job on a `slurm-cluster`. The corresponding batch submission scripts are provided as `slurm-train_sparp.sh` and `slurm-infer_sparp.sh`. 
 
 Modify the above scripts with your own parameters e.g. `--gres` and `--mem` for gpu resources and then execute following commands:
 

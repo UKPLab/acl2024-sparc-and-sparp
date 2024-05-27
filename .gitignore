@@ -1,5 +1,5 @@
 output/
-# *private*
+*private*
 # *train*.json
 # *val*.json
 # *test*.json
