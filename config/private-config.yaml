@@ -1,0 +1,5 @@
+neptune-api-token: <your-neptune-api-token>
+openai:
+  api_version: <your-api-version> 
+  api_key: <your-api-key> 
+  azure_endpoint: <your-azure-endpoint>

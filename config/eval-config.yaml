@@ -1,0 +1,37 @@
+# Uncomment the neptune arguments if tracking experiments using neptune
+# neptune:
+#   workspace: <workspace-name>
+#   project-name: SpaRC-and-SpaRP-Evaluation
+#   run-name: sparc-and-sparp
+#   tags:
+#     - textual-spatial-reasoning
+#     - LLMs
+#     - evaluation
+#     - spatial-reasoning-characterization-(SpaRC)
+#     - spatial-reasoning-path-(SpaRP)
+#     - multiple-formalisms
+#     - direction-topology-qualitative_distance
+#     - fixed-orientation-point-of-view
+
+exp:
+  seed: 42 
+
+  extraction: 
+    ans_trigger: 
+      - "answer is" # for several variants like Hence, So or Therefore
+    # self_consistency_sample_count: 20 # leave blank for self-consistency across all generations
+
+  data_filter:
+    - {} # empty for no filtering
+    # - name: filter_model_output
+    #   args:
+    #     filter_field: "num_hop" # filter outputs to analyze and plot based on number of hops
+
+  calc_metrics:
+    metric_strategies: # leave blank and comment out entries below to calculate all metrics
+      - "exact_match"
+      - "macro avg"
+      - "label-wise"
+      # - "normal_conf_mat"
+
+  input_dir: <path-to-model-output-generations>

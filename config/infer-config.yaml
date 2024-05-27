@@ -1,0 +1,88 @@
+# Uncomment the neptune arguments if tracking experiments using neptune
+# neptune:
+#   workspace: <workspace-name>
+#   project-name: SpaRC-and-SpaRP-Inference
+#   run-name: sparc-and-sparp
+#   tags:
+#     - textual-spatial-reasoning
+#     - LLMs
+#     - inference
+#     - spatial-reasoning-characterization-(SpaRC)
+#     - spatial-reasoning-path-(SpaRP)
+#     - multiple-formalisms
+#     - direction-topology-qualitative_distance
+#     - fixed-orientation-point-of-view
+
+exp:
+  seed: 42
+
+  data:
+    load:
+      path: "UKPLab/sparp" 
+      name: # only on small
+        - "SpaRP-small-PS1 (SpaRTUN)"
+        - "SpaRP-small-PS2 (StepGame)"
+        - "SpaRP-small-PS3"
+        - "SpaRP-small-PS4"
+    shuffle: true
+
+  infer_split: test
+  batch_size: 1
+  exemplars:
+    split: validation
+    k: 5
+
+  messages:
+    instruct_field: instruction
+    creation_args:
+      context_field: context
+      question_field: question
+      response_field: targets
+      response_trigger: "Hence, the answer is "
+      reasoning_field: reasoning
+      reasoning_trigger: "Let's think step by step.\n"
+
+  # Uncomment the block below for local models
+  model:
+    model_class: HFGenerativeLM
+    init_args:
+      model: "<path-to-local-model>"
+      peft_model: # default None, else path to a single trained peft model or a list of peft models in case of iterative finetuning
+      tokenizer_kwargs:
+        padding_side: left
+      pad_token: unk_token
+      device_map: ddp # or infer if large model e.g. 70B is being used with model weights distributed over multi-node
+      torch_dtype: bfloat16 # or model specific value
+      max_memory: {} # default leave blank, or max_memories per device as illustrated below e.g. for 2 80GB GPUs for 70B model
+        # 0: 72GB
+        # 1: 72GB
+      quantize_kwargs: # 8bit
+    generate_args:
+      total_generation: 1
+      generation_config:
+        max_new_tokens: 500
+        do_sample: false # false for greedy decoding
+        num_return_sequences: 1
+
+  # Uncomment the block below for OpenAI models
+  # model:
+  #   model_class: OpenAILM
+  #   init_args:
+  #     client: AzureOpenAI
+  #     config: {} # fill in code with details from private.yaml
+  #   generate_args:
+  #     total_generation: 1
+  #     generation_config:
+  #       max_tokens: 500
+  #       model: gpt-4 
+  #       n: 1 # generates n-generation in one batch and repeats such generations until total_generation is reached
+  #       temperature: 0 # greedy decoding, comment out for diverse sampling
+  #   cost_metric:
+  #     completion_tokens:
+  #       count: 1000
+  #       cost: 0.06 # gpt-4
+  #     prompt_tokens:
+  #       count: 1000
+  #       cost: 0.03 # gpt-4  
+
+  output_dir: output # path to result output directory

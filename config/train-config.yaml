@@ -1,0 +1,123 @@
+# Uncomment the neptune arguments if tracking experiments using neptune
+# neptune:
+#   workspace: <workspace-name>
+#   project-name: SpaRC-and-SpaRP-Training
+#   run-name: sparc-and-sparp
+#   tags:
+#     - textual-spatial-reasoning
+#     - LLMs
+#     - training
+#     - spatial-reasoning-characterization-(SpaRC)
+#     - spatial-reasoning-path-(SpaRP)
+#     - multiple-formalisms
+#     - direction-topology-qualitative_distance
+#     - fixed-orientation-point-of-view
+
+exp:
+  seed: 42
+
+  data:
+    load:
+      path: "UKPLab/sparp"
+      name: # only on small
+        - "SpaRP-small-PS1 (SpaRTUN)"
+        - "SpaRP-small-PS2 (StepGame)"
+        - "SpaRP-small-PS3"
+        - "SpaRP-small-PS4"
+    shuffle: true
+    chat_template_args:
+      prepare_splits: 
+        - train
+        - validation
+      instruct_field: instruction
+      context_field: context
+      question_field: question
+      response_field: targets
+      response_trigger: "Hence, the answer is "
+      reasoning_field: reasoning
+      reasoning_trigger: "Let's think step by step.\n"
+
+  # training configs and details adapted from community resources mentioned on the
+  # HF's llama2 model_doc at:
+  # https://huggingface.co/docs/transformers/main/model_doc/llama2
+  # e.g. notebooks linked under text generation and optimization for QLoRA training
+  # And trl sft example scripts at:
+  # https://github.com/huggingface/trl/blob/main/examples/scripts/sft.py
+  
+  model:
+    model_class: HFGenerativeLM
+    init_args:
+      model: "<path-to-local-model>"
+      peft_model: # default None, else path to a single trained peft model or a list of peft models in case of iterative finetuning
+      tokenizer_kwargs:
+        # right padding to fix unexpected overflow issues with fp16 training as noted in the sft_trainer:
+        # https://github.com/huggingface/trl/blob/main/trl/trainer/sft_trainer.py#L285
+        padding_side: right
+      pad_token: unk_token
+      device_map: ddp # or infer if large model e.g. 70B is being used with model weights distributed over multi-node
+      torch_dtype: bfloat16 # or model specific value
+      max_memory: {} # default leave blank, or max_memories per device as illustrated below e.g. for 2 80GB GPUs for 70B model
+        # 0: 72GB
+        # 1: 72GB
+      quantize_kwargs: 8bit # for quantized finetuning
+
+  peft:
+    config: LoraConfig
+    config_args:
+      lora_alpha: 16 # Alpha parameter for LoRA scaling
+      lora_dropout: 0.1 # Dropout probability for LoRA layers
+      r: 64 # LoRA attention dimension
+      bias: none
+      task_type: "CAUSAL_LM"
+
+  train:
+    training:
+      num_train_epochs: 3
+      # max_steps: -1 # Number of training steps (overrides num_train_epochs)
+      per_device_train_batch_size: 4
+      gradient_accumulation_steps: 8 # thus effective batch size = 4*8 = 32
+      gradient_checkpointing: true
+      gradient_checkpointing_kwargs: # leave None as default
+        use_reentrant: true
+      optim: paged_adamw_32bit
+      save_steps: 50
+      logging_steps: 10
+      save_total_limit: 10
+      save_strategy: steps
+      # # evaluation parameters, uncomment to use
+      per_device_eval_batch_size: 4
+      eval_steps: 50
+      evaluation_strategy: steps
+      metric_for_best_model: eval_loss
+      load_best_model_at_end: true
+      greater_is_better: false
+      learning_rate: 1.0e-4
+      weight_decay: 0.001 # Weight decay to apply to all layers except bias/LayerNorm weights
+      # fp16: true
+      bf16: true
+      max_grad_norm: 0.3 # Maximum gradient normal (gradient clipping)
+      warmup_ratio: 0.03 # Ratio of steps for a linear warmup (from 0 to learning rate)
+      # Group sequences into batches with same length
+      # Saves memory and speeds up training considerably
+      group_by_length: true
+      lr_scheduler_type: cosine
+      # report_to: tensorboard
+      report_to: none
+      # ddp_find_unused_parameters: false
+
+    callbacks:
+      - name: NeptuneCallback
+        args: # No args for Neptune Callback
+      - name: EarlyStoppingCallback
+        args:
+          early_stopping_patience: 7
+    
+    trainer:
+      dataset_text_field: chat_text # or else use instead formatting_func
+      max_seq_length: 2048 # default none is same as 1024
+      packing: false
+      neftune_noise_alpha: 5
+      dataset_kwargs:
+        add_special_tokens: false # already added while applying chat template
+
+  output_dir: output # path to result output directory
