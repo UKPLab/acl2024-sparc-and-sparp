@@ -1,7 +1,7 @@
 # Spatial Reasoning Characterization (SpaRC) and Path (SpaRP) generation
 [![The Vault on HuggingFace datasets](https://img.shields.io/badge/%F0%9F%A4%97%20Datasets-UKPLab/sparp-yellow?style=flat)](https://huggingface.co/datasets/UKPLab/sparp)
 
-<img src="assets/SpaRC-and-SpaRP.png">
+<img src="assets/SpaRC-and-SpaRP.jpg">
 
 This repository includes the training, inference and evaluation code used in our ACL 2024 paper - [SpaRC and SpaRP: Spatial Reasoning Characterization and Path Generation for Understanding Spatial Reasoning Capability of Large Language Models]().
 
