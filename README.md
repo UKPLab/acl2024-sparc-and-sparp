@@ -56,7 +56,7 @@ config/
 └── train-config.yaml
 ```
 
-The private api keys such as for using OpenAI models can be provided in the `private-config.yaml` file. Other task specific settings e.g. model parameters, dataset names etc. for training, inference and evaluation can be specified in their respective config files.
+The private api keys such as for using OpenAI models can be provided in the `private-config.yaml` file. Other task specific settings e.g. `model` parameters, `dataset` names etc. for training, inference and evaluation can be specified in their respective config files.
 
 To run a desired task e.g. inference, execute the following command:
 
