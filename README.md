@@ -78,18 +78,22 @@ sbatch slurm-infer_sparp.sh
 If you use this repository and our work, please cite:
 
 ```
-@inproceedings{rizvi-2024-sparc,
-  title={SpaRC and SpaRP: Spatial Reasoning Characterization and Path Generation for Understanding Spatial Reasoning Capability of Large Language Models},
-  author={Rizvi, Md Imbesat Hassan Rizvi and Zhu, Xiaodan and Gurevych, Iryna},
-  editor = "",
-  booktitle = "Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics",
-  month = aug,
-  year = "2024",
-  address = "Bangkok, Thailand",
-  publisher = "Association for Computational Linguistics",
-  url = "",
-  doi = "",
-  pages = "",
+@inproceedings{rizvi-etal-2024-sparc,
+    title = "{S}pa{RC} and {S}pa{RP}: Spatial Reasoning Characterization and Path Generation for Understanding Spatial Reasoning Capability of Large Language Models",
+    author = "Rizvi, Md Imbesat  and
+      Zhu, Xiaodan  and
+      Gurevych, Iryna",
+    editor = "Ku, Lun-Wei  and
+      Martins, Andre  and
+      Srikumar, Vivek",
+    booktitle = "Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = aug,
+    year = "2024",
+    address = "Bangkok, Thailand",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2024.acl-long.261/",
+    doi = "10.18653/v1/2024.acl-long.261",
+    pages = "4750--4767",
 }
 ```
 
