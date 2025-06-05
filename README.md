@@ -93,7 +93,7 @@ If you use this repository and our work, please cite:
     publisher = "Association for Computational Linguistics",
     url = "https://aclanthology.org/2024.acl-long.261/",
     doi = "10.18653/v1/2024.acl-long.261",
-    pages = "4750--4767",
+    pages = "4750--4767"
 }
 ```
 
